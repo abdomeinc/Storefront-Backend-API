@@ -1,0 +1,1172 @@
+PS C:\EgyFWD\Egy-FWD-Storefront-Backend-API-Project> npm run check
+
+> egyfwdproject02@1.0.0 check
+> cross-env ENV=test&& set ENV=test&& npm run build && npm run drop-test-db && npm run create-test-db && npm run test-migrate-up && npm run prettier && npm run eslint && jasmine && npm run test-migrate-down && npm run drop-test-db
+
+
+> egyfwdproject02@1.0.0 build
+> npx tsc
+
+
+> egyfwdproject02@1.0.0 drop-test-db
+> db-migrate --config ./database.json --env maindb -e maindb db:drop egyfwd_db_test
+
+[INFO] Deleted database "egyfwd_db_test"
+
+> egyfwdproject02@1.0.0 create-test-db
+> db-migrate --config ./database.json --env maindb -e maindb db:create egyfwd_db_test
+
+[INFO] Created database "egyfwd_db_test"
+
+> egyfwdproject02@1.0.0 test-migrate-up
+> db-migrate --config ./database.json --env test -e test up
+
+received data: CREATE TABLE users (
+    id SERIAL PRIMARY KEY NOT NULL,
+    first_name VARCHAR(25) NOT NULL,
+    last_name VARCHAR(25) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    password TEXT NOT NULL,
+    is_admin BOOLEAN NOT NULL,
+    create_date DATE NOT NULL,
+    last_login_date DATE);
+
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    create_date DATE NOT NULL);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY NOT NULL,
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    order_status INTEGER NOT NULL,
+    create_date DATE NOT NULL);
+
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    price INTEGER NOT NULL,
+    category_id INTEGER NOT NULL REFERENCES categories(id),
+    create_date DATE NOT NULL);
+
+CREATE TABLE order_products (
+    id SERIAL PRIMARY KEY NOT NULL,
+    product_id INTEGER NOT NULL REFERENCES products(id),
+    quantity INTEGER NOT NULL,
+    order_id INTEGER NOT NULL REFERENCES orders(id),
+    create_date DATE NOT NULL);
+[INFO] Processed migration 20220223172432-db
+[INFO] Done
+
+> egyfwdproject02@1.0.0 prettier
+> prettier --config .prettierrc.json "src/**/*.ts" --write
+
+src\app.ts 130ms
+src\database\manager.ts 42ms
+src\helpers\enums.ts 8ms
+src\models\Category.ts 102ms
+src\models\interfaces\iHandler.ts 76ms
+src\models\interfaces\iModel.ts 10ms
+src\models\Order.ts 106ms
+src\models\OrderProduct.ts 193ms
+src\models\Product.ts 136ms
+src\models\User.ts 107ms
+src\routes\administration\categories.ts 35ms
+src\routes\administration\dashboard.ts 14ms
+src\routes\administration\orderProducts.ts 43ms
+src\routes\administration\orders.ts 64ms
+src\routes\administration\products.ts 54ms
+src\routes\administration\users.ts 59ms
+src\routes\user\categories.ts 16ms
+src\routes\user\orderProducts.ts 99ms
+src\routes\user\orders.ts 68ms
+src\routes\user\products.ts 62ms
+src\routes\user\users.ts 85ms
+src\services\dashboard.ts 40ms
+src\tests\helpers\reporter.ts 32ms
+src\tests\models\a.user.spec.ts 157ms
+src\tests\models\b.category.spec.ts 59ms
+src\tests\models\c.product.spec.ts 126ms
+src\tests\models\d.order.spec.ts 62ms
+src\tests\models\e.orderProduct.spec.ts 94ms
+src\tests\routes\administration\a.users.spec.ts 59ms
+src\tests\routes\administration\b.categories.spec.ts 50ms
+src\tests\routes\administration\c.products.spec.ts 27ms
+src\tests\routes\administration\d.orders.spec.ts 53ms
+src\tests\routes\administration\e.orderProducts.spec.ts 46ms
+src\tests\routes\administration\f.dashboard.spec.ts 21ms
+src\tests\routes\user\a.users.spec.ts 39ms
+src\tests\routes\user\b.categories.spec.ts 27ms
+src\tests\routes\user\c.products.spec.ts 21ms
+src\tests\routes\user\d.orders.spec.ts 32ms
+src\tests\routes\user\e.orderProducts.spec.ts 39ms
+src\tests\utilities\validator.spec.ts 10ms
+src\utilities\systemLogger.ts 6ms
+src\utilities\validator.ts 122ms
+
+> egyfwdproject02@1.0.0 eslint
+> eslint . --fix --ext .ts
+
+Current runtime environment: test
+Jasmine started
+Server is now listening at http://localhost:6060
+
+  User Model
+
+    loadAll method
+      √ UserHandler should have an loadAll method
+      √ loadAll method should return array of users 0 length
+
+    Create method
+      √ UserHandler should have an create method
+      √ create method should add a new normal user [Ali Al-Masry] and returns its data
+      √ create method should add a new admin user [System Admin] and returns its data
+      √ create method should add a new normal user [test user] and returns its data
+
+    loadAll method
+      √ loadAll method should return array of users 3 length
+
+    Load method
+      √ UserHandler should have an load method
+{
+  id: 1,
+  first_name: 'Ali',
+  last_name: 'Al-Masry',
+  full_name: 'Ali Al-Masry',
+  email: 'alialmasry@egyfwd.com',
+  password: '$2b$10$otZJoQpOpz5/aHfbdICzmuVu414msESRqLIZsiPa2z48JEqv499Em',
+  is_admin: false,
+  orders_count: '0',
+  create_date: 2022-03-07T22:00:00.000Z,
+  last_login_date: null
+}
+      √ load method should load user with id 1 and returns its data
+{
+  id: 2,
+  first_name: 'System',
+  last_name: 'Admin',
+  full_name: 'System Admin',
+  email: 'system_admin@egyfwd.com',
+  password: '$2b$10$lrNjAVTFTcb065XrfeGrAubTi7O34k52U00ewPlERVPTj3IrItoDy',
+  is_admin: true,
+  orders_count: '0',
+  create_date: 2022-03-07T22:00:00.000Z,
+  last_login_date: null
+}
+      √ load method should load user with id 2 and returns its data
+{
+  id: 3,
+  first_name: 'test',
+  last_name: 'user',
+  full_name: 'test user',
+  email: 'test_user@egyfwd.com',
+  password: '$2b$10$ahjYhvMHBvw2xX/9RcU0f.w5PEGYch4mj8uGfNFuS7Qe.yNbANHN2',
+  is_admin: false,
+  orders_count: '0',
+  create_date: 2022-03-07T22:00:00.000Z,
+  last_login_date: null
+}
+      √ load method should load user with id 3 and returns its data
+
+    Edit method
+      √ UserHandler should have an edit method
+      √ edit method should edit user 1 and returns its data
+
+    Authenticate method
+      √ UserHandler should have an authenticate method
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJmaXJzdF9uYW1lIjoiQWJkZWwgTW91bWVuIiwibGFzdF9uYW1lIjoiQWJkZWwgUmFvdWYiLCJmdWxsX25hbWUiOiJBYmRlbCBNb3VtZW4gQWJkZWwgUmFvdWYiLCJlbWFpbCI6ImFsaWFsbWFzcnlAZWd5ZndkLmNvbSIsInBhc3N3b3JkIjoiJDJiJDEwJG90WkpvUXBPcHo1L2FIZmJkSUN6bXVWdTQxNG1zRVNScUxJWnNpUGEyejQ4SkVxdjQ5OUVtIiwiaXNfYWRtaW4iOmZhbHNlLCJvcmRlcnNfY291bnQiOiIwIiwiY3JlYXRlX2RhdGUiOiIyMDIyLTAzLTA3VDIyOjAwOjAwLjAwMFoiLCJsYXN0X2xvZ2luX2RhdGUiOm51bGx9LCJpYXQiOjE2NDY3NjI1NTZ9.Sock8QoajMHFEoW8wHuJ-fBVsYM7N3H_5_ayaKNQmVA
+      √ authenticate method should authenticate alialmasry@egyfwd.com user and returns user data
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoyLCJmaXJzdF9uYW1lIjoiU3lzdGVtIiwibGFzdF9uYW1lIjoiQWRtaW4iLCJmdWxsX25hbWUiOiJTeXN0ZW0gQWRtaW4iLCJlbWFpbCI6InN5c3RlbV9hZG1pbkBlZ3lmd2QuY29tIiwicGFzc3dvcmQiOiIkMmIkMTAkbHJOakFWVEZUY2IwNjVYcmZlR3JBdWJUaTdPMzRrNTJVMDBld1BsRVJWUFRqM0lySXRvRHkiLCJpc19hZG1pbiI6dHJ1ZSwib3JkZXJzX2NvdW50IjoiMCIsImNyZWF0ZV9kYXRlIjoiMjAyMi0wMy0wN1QyMjowMDowMC4wMDBaIiwibGFzdF9sb2dpbl9kYXRlIjpudWxsfSwiaWF0IjoxNjQ2NzYyNTU2fQ.Kt5OwOPwy67fg3-4TIXhSs5MOCk9F0o1eY8lNLE8mA4
+      √ authenticate method should authenticate system_admin@egyfwd.com user and returns user data
+
+    Delete method
+      √ UserHandler should have an delete method
+      √ delete method should delete user 3 and returns with success for deletion.
+
+  Category Model
+
+    loadAll method
+      √ CategoryHandler should have an loadAll method
+      √ loadAll method should return array of categories 0 length
+
+    Create method
+      √ CategoryHandler should have an create method
+      √ create method should add a new category [Smart Phones] and returns its data
+      √ create method should add a new category [Computers] and returns its data
+      √ create method should add a new category [test category] and returns its data
+
+    loadAll method
+      √ loadAll method should return array of categories 3 length
+
+    Load method
+      √ CategoryHandler should have an load method
+{
+  id: 1,
+  name: 'Smart Phones',
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load category with id 1 and returns its data
+{
+  id: 2,
+  name: 'Computers',
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load category with id 2 and returns its data
+{
+  id: 3,
+  name: 'test category',
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load category with id 3 and returns its data
+
+    Edit method
+      √ CategoryHandler should have an edit method
+      √ edit method should edit category 1 and returns its data
+      √ edit method should edit category 2 and returns its data
+
+    Delete method
+      √ CategoryHandler should have an delete method
+      √ delete method should delete category 3 and returns with success for deletion.
+
+  Product Model
+
+    loadAll method
+      √ ProductHandler should have an loadAll method
+      √ loadAll method should return array of products of category 1 with length 0
+
+    Create method
+      √ ProductHandler should have an create method
+      √ create method should add a new normal product [Samsung A70s] and returns its data
+      √ create method should add a new admin product [Oppo A30s] and returns its data
+      √ create method should add a new admin product [DELL Inspiron 5500 Laptop] and returns its data
+      √ create method should add a new admin product [HP Crown Desktop] and returns its data
+      √ create method should add a new admin product [test product] and returns its data
+
+    loadAll method
+      √ loadAll method should return array of products for category 1 with length 2
+
+    loadAll method
+      √ loadAll method should return array of products for category 2 with length 3
+
+2022-2-2 20:2:36: Error: category 3 is not exists.
+    loadAll method
+      √ loadAll method should return array of products for category 3 with length 0
+
+    Load method
+      √ ProductHandler should have an load method
+{
+  id: 1,
+  name: 'Samsung A70s',
+  price: 5700,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should product with id 1 and returns its data
+{
+  id: 2,
+  name: 'Oppo A30s',
+  price: 4500,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should product with id 2 and returns its data
+{
+  id: 3,
+  name: 'DELL Inspiron 5500 Laptop',
+  price: 9800,
+  category_id: 2,
+  category_name: 'Computers Category',
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should product with id 3 and returns its data
+{
+  id: 4,
+  name: 'HP Crown Desktop',
+  price: 6300,
+  category_id: 2,
+  category_name: 'Computers Category',
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should product with id 4 and returns its data
+{
+  id: 5,
+  name: 'test product',
+  price: 500,
+  category_id: 2,
+  category_name: 'Computers Category',
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should product with id 5 and returns its data
+
+    Edit method
+      √ ProductHandler should have an edit method
+      √ edit method should edit product 1 and returns its data
+      √ edit method should edit product 2 and returns its data
+      √ edit method should edit product 3 and returns its data
+      √ edit method should edit product 4 and returns its data
+
+    Delete method
+      √ ProductHandler should have an delete method
+      √ delete method should delete this product 5 in category 2 and returns with success for deletion.
+
+  Order Model
+
+    loadAll method
+      √ OrderHandler should have an loadAll method
+      √ loadAll method should return array of orders with length 0
+
+    Create method
+      √ OrderHandler should have an create method
+      √ create method should add a new order for user 1 and returns its data
+      √ create method should add a new order for user 1 and returns its data
+      √ create method should add a new order for user 2 and returns its data
+      √ create method should add a new order for user 2 and returns its data
+
+    loadAll method
+      √ loadAll method should return array of all orders with length 4
+
+    loadAll method
+      √ loadAll method should return array of orders for user 1 with length 2
+
+    loadAll method
+      √ loadAll method should return array of orders for user 2 with length 2
+
+    Load method
+      √ OrderHandler should have an load method
+{
+  id: 1,
+  user_id: 1,
+  order_status: 1,
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load order with id 1 and returns its data
+{
+  id: 2,
+  user_id: 1,
+  order_status: 1,
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load order with id 2 and returns its data
+{
+  id: 3,
+  user_id: 2,
+  order_status: 1,
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load order with id 3 and returns its data
+{
+  id: 4,
+  user_id: 2,
+  order_status: 1,
+  create_date: 2022-03-07T22:00:00.000Z,
+  products_count: '0'
+}
+      √ load method should load order with id 4 and returns its data
+
+    Edit method
+      √ OrderHandler should have an edit method
+      √ edit method should edit order 3 and returns its data
+      √ edit method should edit order 4 and returns its data
+
+    Delete method
+      √ OrderHandler should have an delete method
+      √ delete method should delete this order 3 for user 2 and returns with success for deletion.
+
+  OrderProduct Model
+
+    loadAll method
+      √ OrderProductsHandler should have an loadAll method
+      √ loadAll method should return array of orders with length 0
+
+    Create method
+      √ OrderProductsHandler should have an create method
+      √ create method should add a new product for order 1 and returns its data
+      √ create method should add a new product for order 1 and returns its data
+      √ create method should add a new product for order 2 and returns its data
+      √ create method should add a new product for order 2 and returns its data
+      √ create method should add a new product for order 2 and returns its data
+
+    loadAll method
+      √ loadAll method should return array of all order products with length 5
+
+[
+  {
+    id: 1,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    product_id: 1,
+    product_name: 'Samsung Galaxy Dual Sim',
+    price: 4500,
+    quantity: 1,
+    total_price: 4500,
+    order_id: 1,
+    create_date: 2022-03-07T22:00:00.000Z
+  },
+  {
+    id: 2,
+    category_id: 2,
+    category_name: 'Computers Category',
+    product_id: 3,
+    product_name: 'Laptop DELL Inspiron 5800',
+    price: 8750,
+    quantity: 2,
+    total_price: 17500,
+    order_id: 1,
+    create_date: 2022-03-07T22:00:00.000Z
+  },
+  {
+    id: 5,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    product_id: 1,
+    product_name: 'Samsung Galaxy Dual Sim',
+    price: 4500,
+    quantity: 1,
+    total_price: 4500,
+    order_id: 1,
+    create_date: 2022-03-07T22:00:00.000Z
+  }
+]
+    loadAllByOrder method
+      √ loadAllByOrder method should return array of products for order 1 with length 3
+
+[
+  {
+    id: 3,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    product_id: 2,
+    product_name: 'Oppo A74',
+    price: 4999,
+    quantity: 1,
+    total_price: 4999,
+    order_id: 2,
+    create_date: 2022-03-07T22:00:00.000Z
+  },
+  {
+    id: 4,
+    category_id: 2,
+    category_name: 'Computers Category',
+    product_id: 4,
+    product_name: 'HP Crown PC',
+    price: 6700,
+    quantity: 2,
+    total_price: 13400,
+    order_id: 2,
+    create_date: 2022-03-07T22:00:00.000Z
+  }
+]
+    loadAllByOrder method
+      √ loadAllByOrder method should return array of products for order 2 with length 2
+
+    Load method
+      √ OrderProductsHandler should have an load method
+{
+  id: 1,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  product_id: 1,
+  product_name: 'Samsung Galaxy Dual Sim',
+  price: 4500,
+  quantity: 1,
+  total_price: 4500,
+  order_id: 1,
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should load order product with id 1 and returns its data
+{
+  id: 2,
+  category_id: 2,
+  category_name: 'Computers Category',
+  product_id: 3,
+  product_name: 'Laptop DELL Inspiron 5800',
+  price: 8750,
+  quantity: 2,
+  total_price: 17500,
+  order_id: 1,
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should load order product with id 2 and returns its data
+{
+  id: 3,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  product_id: 2,
+  product_name: 'Oppo A74',
+  price: 4999,
+  quantity: 1,
+  total_price: 4999,
+  order_id: 2,
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should load order product with id 3 and returns its data
+{
+  id: 4,
+  category_id: 2,
+  category_name: 'Computers Category',
+  product_id: 4,
+  product_name: 'HP Crown PC',
+  price: 6700,
+  quantity: 2,
+  total_price: 13400,
+  order_id: 2,
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should load order product with id 4 and returns its data
+{
+  id: 5,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  product_id: 1,
+  product_name: 'Samsung Galaxy Dual Sim',
+  price: 4500,
+  quantity: 1,
+  total_price: 4500,
+  order_id: 1,
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should load order product with id 5 and returns its data
+
+    Edit method
+      √ OrderProductsHandler should have an edit method
+{
+  id: 5,
+  product_id: 3,
+  quantity: 1,
+  order_id: 1,
+  create_date: 2022-03-07T22:00:00.000Z
+}
+      √ load method should edit order product with id 5 and returns its data
+
+    Delete method
+      √ OrderHandler should have an delete method
+      √ delete method should delete this order and returns with success for deletion.
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    first_name: 'Abdel Moumen',
+    last_name: 'Abdel Raouf',
+    full_name: 'Abdel Moumen Abdel Raouf',
+    email: 'alialmasry@egyfwd.com',
+    password: '$2b$10$otZJoQpOpz5/aHfbdICzmuVu414msESRqLIZsiPa2z48JEqv499Em',
+    is_admin: false,
+    orders_count: '2',
+    create_date: '2022-03-07T22:00:00.000Z',
+    last_login_date: '2022-03-07T22:00:00.000Z'
+  },
+  {
+    id: 2,
+    first_name: 'System',
+    last_name: 'Admin',
+    full_name: 'System Admin',
+    email: 'system_admin@egyfwd.com',
+    password: '$2b$10$lrNjAVTFTcb065XrfeGrAubTi7O34k52U00ewPlERVPTj3IrItoDy',
+    is_admin: true,
+    orders_count: '1',
+    create_date: '2022-03-07T22:00:00.000Z',
+    last_login_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+  [Admin Users] Users API Endpoints
+
+    Load All Users Endpoint http://localhost:6060/api/administration/management/users
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 2,
+    first_name: 'System',
+    last_name: 'Admin',
+    full_name: 'System Admin',
+    email: 'system_admin@egyfwd.com',
+    password: '$2b$10$lrNjAVTFTcb065XrfeGrAubTi7O34k52U00ewPlERVPTj3IrItoDy',
+    is_admin: true,
+    orders_count: '1',
+    create_date: '2022-03-07T22:00:00.000Z',
+    last_login_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+    Load Admin Users Endpoint http://localhost:6060/api/administration/management/users/admins
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    first_name: 'Abdel Moumen',
+    last_name: 'Abdel Raouf',
+    full_name: 'Abdel Moumen Abdel Raouf',
+    email: 'alialmasry@egyfwd.com',
+    password: '$2b$10$otZJoQpOpz5/aHfbdICzmuVu414msESRqLIZsiPa2z48JEqv499Em',
+    is_admin: false,
+    orders_count: '2',
+    create_date: '2022-03-07T22:00:00.000Z',
+    last_login_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+    Load Non Admins Users Endpoint http://localhost:6060/api/administration/management/users/non-admins
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 4,
+  first_name: 'test',
+  last_name: 'account',
+  email: 'abc@def.ghi',
+  password: '',
+  is_admin: true,
+  create_date: '2022-03-07T22:00:00.000Z',
+  last_login_date: null
+}
+    Create Admin User Endpoint http://localhost:6060/api/administration/management/users/create
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Admin User Endpoint http://localhost:6060/api/administration/management/users/4/delete
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    name: 'Smart Phones Category',
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  },
+  {
+    id: 2,
+    name: 'Computers Category',
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  }
+]
+  [Admin Users] Categories API Endpoints
+
+    Load All Categories Endpoint http://localhost:6060/api/administration/eshop/categories
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 1,
+  name: 'Smart Phones Category',
+  create_date: '2022-03-07T22:00:00.000Z',
+  products_count: '2'
+}
+    Load Categories Endpoint http://localhost:6060/api/administration/eshop/categories/1
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 2,
+  name: 'the changed category',
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Edit Category Endpoint http://localhost:6060/api/administration/eshop/categories/2/edit
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 4,
+  name: 'new category',
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Create Category Endpoint http://localhost:6060/api/administration/eshop/categories/create
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Category Endpoint http://localhost:6060/api/administration/eshop/categories/4/delete
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    name: 'Samsung Galaxy Dual Sim',
+    price: 4500,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    create_date: '2022-03-07T22:00:00.000Z'
+  },
+  {
+    id: 2,
+    name: 'Oppo A74',
+    price: 4999,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    create_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+  [Admin Users] Products API Endpoints
+
+    Load All Products Endpoint http://localhost:6060/api/administration/eshop/categories/1/products
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 1,
+  name: 'Samsung Galaxy Dual Sim',
+  price: 4500,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Load Products Endpoint http://localhost:6060/api/administration/eshop/categories/1/products/1
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 6,
+  name: 'super product',
+  price: 7000,
+  category_id: 1,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Create Product Endpoint http://localhost:6060/api/administration/eshop/categories/1/products/create
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 6,
+  name: 'the super product',
+  price: 8000,
+  category_id: 1,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Edit Product Endpoint http://localhost:6060/api/administration/eshop/categories/1/products/6/edit
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Product Endpoint http://localhost:6060/api/administration/eshop/categories/1/products/6/delete
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    user_id: 1,
+    order_status: 1,
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  },
+  {
+    id: 2,
+    user_id: 1,
+    order_status: 1,
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  },
+  {
+    id: 4,
+    user_id: 2,
+    order_status: 2,
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '0'
+  }
+]
+  [Admin Users] Orders API Endpoints
+
+    Admin Load All Orders Endpoint http://localhost:6060/api/administration/eshop/orders
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 4,
+    user_id: 2,
+    order_status: 2,
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '0'
+  }
+]
+    Load All Orders Endpoint http://localhost:6060/api/administration/eshop/users/2/orders
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 4,
+  user_id: 2,
+  order_status: 2,
+  create_date: '2022-03-07T22:00:00.000Z',
+  products_count: '0'
+}
+    Load Orders Endpoint http://localhost:6060/api/administration/eshop/users/2/orders/4
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Order Endpoint http://localhost:6060/api/administration/eshop/users/2/orders/4/delete
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    product_id: 1,
+    product_name: 'Samsung Galaxy Dual Sim',
+    price: 4500,
+    quantity: 1,
+    total_price: 4500,
+    order_id: 1,
+    create_date: '2022-03-07T22:00:00.000Z'
+  },
+  {
+    id: 5,
+    category_id: 2,
+    category_name: 'the changed category',
+    product_id: 3,
+    product_name: 'Laptop DELL Inspiron 5800',
+    price: 8750,
+    quantity: 1,
+    total_price: 8750,
+    order_id: 1,
+    create_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+  [Admin Users] Orders API Endpoints
+
+    Load All Order 1 Products Endpoint http://localhost:6060/api/administration/eshop/users/1/orders/1/products
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 1,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  product_id: 1,
+  product_name: 'Samsung Galaxy Dual Sim',
+  price: 4500,
+  quantity: 1,
+  total_price: 4500,
+  order_id: 1,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Load Order product 1 Endpoint http://localhost:6060/api/administration/eshop/users/1/orders/1/products/1
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Order product 1 Endpoint http://localhost:6060/api/administration/eshop/users/1/orders/1/products/1/delete
+      √ returns status code 200
+
+response status: 200 OK
+[
+  { name: 'Oppo A74', price: 4999, order_id: 2 },
+  { name: 'HP Crown PC', price: 6700, order_id: 2 },
+  { name: 'Laptop DELL Inspiron 5800', price: 8750, order_id: 1 }
+]
+  Dashboard API Endpoints
+
+    Load Products In Orders Endpoint http://localhost:6060/api/administration/eshop/dashboard/orders/products
+      √ returns status code 200
+
+response status: 200 OK
+[
+  { first_name: 'Abdel Moumen', last_name: 'Abdel Raouf' },
+  { first_name: 'Abdel Moumen', last_name: 'Abdel Raouf' }
+]
+    Load Users With Orders Endpoint http://localhost:6060/api/administration/eshop/dashboard/orders/users
+      √ returns status code 200
+
+response status: 200 OK
+[
+  { name: 'Laptop DELL Inspiron 5800', price: 8750 },
+  { name: 'HP Crown PC', price: 6700 },
+  { name: 'Oppo A74', price: 4999 },
+  { name: 'Samsung Galaxy Dual Sim', price: 4500 }
+]
+    Load Five Most Expensive Endpoint http://localhost:6060/api/administration/eshop/dashboard/products/top5
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 5,
+  first_name: 'test',
+  last_name: 'account 2',
+  email: 'abc2@def.ghi',
+  password: '',
+  is_admin: false,
+  create_date: '2022-03-07T22:00:00.000Z',
+  last_login_date: null
+}
+  [Normal Users] Users API Endpoints
+
+    Create Endpoint http://localhost:6060/api/eshop/users/create
+      √ returns status code 200
+
+response status: 200 OK
+userAuthKey: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo1LCJmaXJzdF9uYW1lIjoidGVzdCIsImxhc3RfbmFtZSI6ImFjY291bnQgMiIsImZ1bGxfbmFtZSI6InRlc3QgYWNjb3VudCAyIiwiZW1haWwiOiJhYmMyQGRlZi5naGkiLCJwYXNzd29yZCI6IiIsImlzX2FkbWluIjpmYWxzZSwib3JkZXJzX2NvdW50IjoiMCIsImNyZWF0ZV9kYXRlIjoiMjAyMi0wMy0wN1QyMjowMDowMC4wMDBaIiwibGFzdF9sb2dpbl9kYXRlIjpudWxsfSwiaWF0IjoxNjQ2NzYyNTU4fQ.hicurCe4MNB0IuCzyVsMgPXmrl7cn_kUxlGsfODEay4
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjo1LCJmaXJzdF9uYW1lIjoidGVzdCIsImxhc3RfbmFtZSI6ImFjY291bnQgMiIsImZ1bGxfbmFtZSI6InRlc3QgYWNjb3VudCAyIiwiZW1haWwiOiJhYmMyQGRlZi5naGkiLCJwYXNzd29yZCI6IiIsImlzX2FkbWluIjpmYWxzZSwib3JkZXJzX2NvdW50IjoiMCIsImNyZWF0ZV9kYXRlIjoiMjAyMi0wMy0wN1QyMjowMDowMC4wMDBaIiwibGFzdF9sb2dpbl9kYXRlIjpudWxsfSwiaWF0IjoxNjQ2NzYyNTU4fQ.hicurCe4MNB0IuCzyVsMgPXmrl7cn_kUxlGsfODEay4
+    Authenticate User Endpoint http://localhost:6060/api/eshop/users/authenticate
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 5,
+  first_name: 'test',
+  last_name: 'account 2',
+  full_name: 'test account 2',
+  email: 'abc2@def.ghi',
+  password: '',
+  is_admin: false,
+  orders_count: '0',
+  create_date: '2022-03-07T22:00:00.000Z',
+  last_login_date: '2022-03-07T22:00:00.000Z'
+}
+    Load User Endpoint http://localhost:6060/api/eshop/users/5
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 5,
+  first_name: 'account',
+  last_name: 'changed',
+  email: 'abc2@def.ghi',
+  password: '',
+  is_admin: false,
+  create_date: '2022-03-07T22:00:00.000Z',
+  last_login_date: '2022-03-07T22:00:00.000Z'
+}
+    Edit User Endpoint http://localhost:6060/api/eshop/users/5/edit
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    name: 'Smart Phones Category',
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  },
+  {
+    id: 2,
+    name: 'the changed category',
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  }
+]
+  [Normal Users] Categories API Endpoints
+
+    Load All Categories Endpoint http://localhost:6060/api/eshop/categories
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 1,
+  name: 'Smart Phones Category',
+  create_date: '2022-03-07T22:00:00.000Z',
+  products_count: '2'
+}
+    Load Categories Endpoint http://localhost:6060/api/eshop/categories/1
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    name: 'Samsung Galaxy Dual Sim',
+    price: 4500,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    create_date: '2022-03-07T22:00:00.000Z'
+  },
+  {
+    id: 2,
+    name: 'Oppo A74',
+    price: 4999,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    create_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+  [Normal Users] Products API Endpoints
+
+    Load All Products for category 1 Endpoint http://localhost:6060/api/eshop/categories/1/products
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 1,
+  name: 'Samsung Galaxy Dual Sim',
+  price: 4500,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Load Product 1 Endpoint http://localhost:6060/api/eshop/categories/1/products/1
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 1,
+    user_id: 1,
+    order_status: 1,
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '1'
+  },
+  {
+    id: 2,
+    user_id: 1,
+    order_status: 1,
+    create_date: '2022-03-07T22:00:00.000Z',
+    products_count: '2'
+  }
+]
+  [Normal Users] Orders API Endpoints
+
+    Load All Orders for user Endpoint http://localhost:6060/api/eshop/users/1/orders
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 1,
+  user_id: 1,
+  order_status: 1,
+  create_date: '2022-03-07T22:00:00.000Z',
+  products_count: '1'
+}
+    Load Order 1 Endpoint http://localhost:6060/api/eshop/users/1/orders/1
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 5,
+  user_id: 1,
+  order_status: 1,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Create a new order for user 1 Endpoint http://localhost:6060/api/eshop/users/1/orders/create
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 5,
+  user_id: 1,
+  order_status: 2,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Update order 5 Endpoint http://localhost:6060/api/eshop/users/1/orders/5/complete
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Order Endpoint http://localhost:6060/api/eshop/users/1/orders/5/delete
+      √ returns status code 200
+
+response status: 200 OK
+[
+  {
+    id: 3,
+    category_id: 1,
+    category_name: 'Smart Phones Category',
+    product_id: 2,
+    product_name: 'Oppo A74',
+    price: 4999,
+    quantity: 1,
+    total_price: 4999,
+    order_id: 2,
+    create_date: '2022-03-07T22:00:00.000Z'
+  },
+  {
+    id: 4,
+    category_id: 2,
+    category_name: 'the changed category',
+    product_id: 4,
+    product_name: 'HP Crown PC',
+    price: 6700,
+    quantity: 2,
+    total_price: 13400,
+    order_id: 2,
+    create_date: '2022-03-07T22:00:00.000Z'
+  }
+]
+  [Normal Users] Orders API Endpoints
+
+    Load All Order prodcuts for user Endpoint http://localhost:6060/api/eshop/users/1/orders/2/products
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 3,
+  category_id: 1,
+  category_name: 'Smart Phones Category',
+  product_id: 2,
+  product_name: 'Oppo A74',
+  price: 4999,
+  quantity: 1,
+  total_price: 4999,
+  order_id: 2,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Load Order specific product Endpoint http://localhost:6060/api/eshop/users/1/orders/2/products/3
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 6,
+  product_id: 2,
+  quantity: 5,
+  order_id: 2,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Create a new order product Endpoint http://localhost:6060/api/eshop/users/1/orders/2/products/create
+      √ returns status code 200
+
+response status: 200 OK
+{
+  id: 6,
+  product_id: 1,
+  quantity: 7,
+  order_id: 2,
+  create_date: '2022-03-07T22:00:00.000Z'
+}
+    Update order product 5 Endpoint http://localhost:6060/api/eshop/users/1/orders/2/products/6/edit
+      √ returns status code 200
+
+response status: 200 OK
+true
+    Delete Order product Endpoint http://localhost:6060/api/eshop/users/1/orders/2/products/6/delete
+      √ returns status code 200
+
+  Validator Methods
+
+    isDigits method
+      √ Validator should have an isDigits method
+      √ isDigits method should return true
+      √ isDigits method should return false
+
+    isEmail method
+      √ Validator should have an isEmail method
+      √ isEmail method should return true
+      √ isEmail method should return false
+
+Executed 148 of 148 specs SUCCESS in 3 secs.
+
+> egyfwdproject02@1.0.0 test-migrate-down
+> db-migrate --config ./database.json --env maindb -e maindb down
+
+[INFO] Defaulting to running 1 down migration.
+[INFO] No migrations to run
+[INFO] Done
+
+> egyfwdproject02@1.0.0 drop-test-db
+> db-migrate --config ./database.json --env maindb -e maindb db:drop egyfwd_db_test
+
+[INFO] Deleted database "egyfwd_db_test"
+PS C:\EgyFWD\Egy-FWD-Storefront-Backend-API-Project>

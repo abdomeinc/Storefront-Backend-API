@@ -1,0 +1,23 @@
+{
+    "dev": {
+      "driver": "pg",
+      "host": "127.0.0.1",
+      "database": "egyfwd_db",
+      "user": "egyfwd",
+      "password": "egyfwd"
+    },
+    "test": {
+      "driver": "pg",
+      "host": "127.0.0.1",
+      "database": "egyfwd_db_test",
+      "user": "egyfwd",
+      "password": "egyfwd"
+    },
+    "maindb": {
+      "driver": "pg",
+      "host": "127.0.0.1",
+      "database": "postgres",
+      "user": "egyfwd",
+      "password": "egyfwd"
+    }
+  }
